@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block planner_nav %} class="active"{% endblock %}
+{% block body_class %}planner_body{% endblock %}
+
+{% block content %}
+<div class="planner">
+  <div class="actions">
+  <div class="btn-group">
+    <button class="btn btn_add_module btn-small">Add Module</button>
+    <button class="btn btn_add_row btn-small">Add Row</button>
+    <button class="btn btn_save_locally btn-small">Save Locally</button>
+    <button class="btn btn_load_from_file btn-small">Load From File</button>
+    <button class="btn btn_save_to_file btn-small">Save To File</button>
+    <button class="btn btn_clear btn-danger btn-small">Clear All</button>
+  </div>
+  <form class="add_row form-inline">
+    <input type="text" name="width" value="" placeholder="Width (in HP)" class="input-small">
+    <button type="submit" class="btn btn-primary">Add</button>
+  </form>
+  <form class="add_module form-inline">
+    <input type="hidden" name="module_id" value="">
+    <input type="text" name="autocomplete" class="module_autocomplete" placeholder="Type a name to start searching">
+    <button type="submit" class="btn btn-primary">Add</button>
+  </form>
+  <form class="load_from_file form-inline">
+    <input type="file" name="file">
+    <div class="error"></div>
+  </form>
+
+  <form class="save_to_file" target="_blank" method="post" action="/modules/save-to-file/">
+    {% csrf_token %}
+    <input type="hidden" name="preset" value="">
+  </form>
+  </div>
+
+  <div class="case">
+  <ul class="euro_rows unstyled">
+  </ul>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}<script type="text/javascript">$(document).ready(function() { $(".planner").planner() });</script>{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if manufacturer %}<h1>{{ manufacturer }}</h1>{% endif %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Module</th>
+      {% if not manufacturer %}<th>Manufacturer</th>{% endif %}
+      <th>HP</th>
+      <th>+12V Current (mA)</th>
+      <th>-12V Current (mA)</th>
+      <th>5V Current (mA)</th>
+      <th>Depth (mm)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for module in object_list %}
+    <tr>
+      <td><a href="{% url module pk=module.id %}">{{ module }}</a></td>
+      {% if not manufacturer %}<td><a href="{% url modules_by_manufacturer pk=module.manufacturer.id %}">{{ module.manufacturer }}</a></td>{% endif %}
+      <td>{{ module.hp }}</td>
+      <td>{% if module.depth %}{{ module.depth }}{% endif %}</td>
+      <td>{% if module.current_12v %}{{ module.current_12v }}{% endif %}</td>
+      <td>{% if module.negative_current_12v %}{{ module.negative_current_12v }}{% endif %}</td>
+      <td>{% if module.current_5v %}{{ module.current_5v }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+  PAGE RANGE: {{ page_obj.paginator.page_range }}
+<div class="pagination pagination-centered">
+
+  <ul>
+    {% if page_obj.has_previous %}
+    <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% endif %}
+
+    <li><a href="#">{{ page_obj.number }}</a></li>
+
+    {% if page_obj.has_next %}
+    <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% endif %}
+  <ul>
+</div>
+
+{% endblock %}
+

@@ -15,6 +15,11 @@ class Module(models.Model):
     current_12v = models.IntegerField(blank=True, null=True)
     negative_current_12v = models.IntegerField(blank=True, null=True)
     current_5v = models.IntegerField(blank=True, null=True)
+    msrp = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    url = models.CharField(blank=True, max_length=200)
 
     def __unicode__(self):
         return self.name
+
+    def autocomplete_name(self):
+        return '%s %s' % (self.manufacturer.name, self.name)

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for manufacturer in object_list %}
+    <tr><td><a href="{% url modules_by_manufacturer pk=manufacturer.id %}">{{ manufacturer }}</a></td><td></td></tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<div class="pagination">
+  <ul>
+    {% if page.has_previous %}
+    <li><a href="?page={{ page.previous_page_number }}">&laquo;</a></li>
+    {% endif %}
+
+    <li>Page {{ page.number }} of {{ page.paginator.num_pages }}</li>
+
+    {% if page.has_next %}
+    <li><a href="?page={{ page.next_page_number }}">&raquo;</a></li>
+    {% endif %}
+  <ul>
+</div>
+{% endblock %}
+

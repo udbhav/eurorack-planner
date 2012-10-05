@@ -1,0 +1,105 @@
+body {
+  padding: 60px 0 40px;
+}
+
+.container {
+  width: auto !important;
+  margin: 0 10px;
+}
+
+/* Customize Bootsrap */
+
+
+
+/* Planner */
+body.planner_body {
+  background: #111;
+  color: #eee;
+}
+
+.planner .case {
+  position: relative;
+  margin-left: 100px;
+}
+
+.planner .euro_row {
+  height: 210px;
+  background: url(../images/euro_rails.jpg);
+  position: relative;
+  z-index: 1;
+}
+
+.planner .euro_row .info {
+  position: absolute;
+  left: -100px;
+  top: 0;
+  font-size: 12px;
+  line-height: 1.4em;
+  height: 190px;
+  padding: 10px;
+  background: black;
+  width: 80px;
+}
+
+.planner .row_nav {
+  position: absolute;
+  left: 10px;
+  top: 65px;
+  opacity: 0.7;
+}
+
+.planner .module {
+  height: 210px;
+  width: 8px;
+  z-index: 2;
+  position: absolute;
+}
+
+.planner .module img {
+  width: 100%;
+  height: 100%;
+}
+
+.planner .actions {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.planner .actions form {
+  display: none;
+  position: absolute;
+  background: #333;
+  padding: 10px;
+  border-radius: 0 0 10px 0;
+  left: 0;
+  margin-bottom: 0;
+  z-index: 3;
+}
+
+.planner .actions form.active {
+  display: block;
+}
+
+.planner .ui-autocomplete {
+  margin: 0;
+  width: 220px !important;
+  border: 1px dotted #ccc;
+  border-bottom: none;
+  border-radius: 4px;
+  list-style-type: none;
+  position: absolute;
+}
+
+.planner .ui-autocomplete li {
+  background: white;
+  border-bottom: 1px dotted #ccc;
+}
+
+.planner .ui-autocomplete a {
+  display: block;
+  padding: 5px 8px;
+}
+
+.planner .ui-autocomplete .ui-state-hover {
+  background: #eaeaea;
+}

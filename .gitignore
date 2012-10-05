@@ -1,3 +1,5 @@
 source/settings/local.py
 env/
 media/
+statique/
+whoosh_index/

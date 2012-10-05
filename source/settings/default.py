@@ -45,8 +45,6 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-
-    'finders.AppMediaDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
@@ -94,6 +92,7 @@ TEMPLATE_DIRS = (p(PROJECT_PATH, 'templates'),)
 # Project Apps: Keep these seperate for testing
 PROJECT_APPS = (
     'apps.modules',
+    'apps.search',
 )
 
 INSTALLED_APPS = (
@@ -109,10 +108,13 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
 
     # Third Party Django Applications
+    'haystack',
     'debug_toolbar',
     'django_extensions',
     'gunicorn',
     'south',
+    'compressor',
+
 ) + PROJECT_APPS
 
 TEMPLATE_TAGS = (
@@ -124,6 +126,19 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.',
     }
 }
+
+# Haystack
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': p(PROJECT_PATH, '../whoosh_index'),
+    },
+}
+
+# Django Compressor
+COMPRESS_PRECOMPILERS = (
+     ('text/less', 'lessc {infile} {outfile}'), 
+)
 
 # Debug Toolbar
 DEBUG_TOOLBAR_CONFIG = {
