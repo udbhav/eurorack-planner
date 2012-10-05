@@ -10,7 +10,7 @@ env.colors = True
 
 @task
 def prod():
-    env.hosts = ["twinsister"]
+    env.hosts = ["kundera"]
     env.deploy_user = 'udbhav'
     env.base = "/home/udbhav/www/django/eurorack-planner/"
     env.app = path.join(env.base, "app/")
