@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'south',
     'compressor',
+    'storages',
 
 ) + PROJECT_APPS
 
