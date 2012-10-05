@@ -12,7 +12,6 @@ django-extensions==0.9
 django-haystack==1.2.7
 django-storages==1.1.5
 gunicorn==0.14.6
-haystack==0.15
 pycrypto==2.6
 python-memcached==1.48
 python-ptrace==0.6.4
