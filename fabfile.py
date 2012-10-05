@@ -1,4 +1,6 @@
-from os import path
+from contextlib import contextmanager
+from functools import wraps
+pfrom os import path
 
 from fabric.api import cd, env, hide, run as _run, sudo as _sudo, task
 from fabric.colors import blue, green, red, yellow
@@ -15,6 +17,12 @@ def prod():
     env.venv = path.join(env.base, "env/")
     env.process = "twinsister"
     env.public = path.join(env.base, "public/")
+    env.maintenance_file = path.join(templates, "maintenance.html")
+
+def print_command(command):
+    print "   %s %s %s\n" % (blue('$', bold=True),
+                             yellow(command, bold=True),
+                             red('->', bold=True))
 
 ##############
 # MAIN TASKS #
@@ -80,3 +88,137 @@ def nginx(command):
 def supervisor(command):
     """ Runs an supervisor command. """
     return sudo("supervisorctl %s" % command)
+
+def _maintenance(on=False):
+    """ This will toggle maintenance mode on the server. """
+    if on:
+        sudo('ln -s %(maintenance_file)s %(public)s' % env)
+
+    else:
+        filepath = path.join(env.public, path.basename(env.maintenance_file))
+        sudo('rm %s' % filepath)
+
+    nginx("restart")
+
+#################
+# SPECIAL TASKS #
+#################
+
+@task
+@log_call
+def hostname(*args):
+    """ This prints the hostname as a test. Use this to prime sudo by passing
+    True.
+    """
+    if args and args[0] == "True":
+        sudo("hostname")
+    else:
+        run("hostname")
+
+
+@task
+@log_call
+def collect_static():
+    """ Collects all of the static media. """
+    return manage("collectstatic --noinput")
+
+
+@task
+@log_call
+def install_requirements():
+    """ Installs the requirements from the requirements.txt file. This will run
+    as the deploy user if on dev.
+    """
+    with cd(env.app):
+        return pip("install -r requirements.txt")
+
+
+@task
+@log_call
+def migrate_db():
+    """ Migrates the db. """
+    return manage("migrate --all")
+
+
+@task
+@log_call
+def pull():
+    """ Git pulls on the remote host. """
+    return git("pull")
+
+
+@task
+@log_call
+def reload_nginx():
+    """ Restarts the nginx process. """
+    return nginx("reload")
+
+
+@task
+@log_call
+def restart_django():
+    """ Restarts the Django Supervisor process. """
+    return supervisor("restart %(process)s" % env)
+
+
+@task
+@log_call
+def restart_celery():
+    """ Restarts the Celery Supervisor process. """
+    return supervisor("restart celery")
+
+
+@task
+@log_call
+def restart_memcached():
+    """ Restarts the Memcached server. """
+    return sudo("service memcached restart")
+
+
+@task
+@log_call
+def clear_cache():
+    """ Clears the cache. """
+    return manage('clear_cache')
+
+
+@task
+@log_call
+def begin_maintenance():
+    """ Turns on maintenance mode. """
+    _maintenance(on=True)
+
+
+@task
+@log_call
+def end_maintenance():
+    """ Turns off maintenance mode. """
+    _maintenance(on=False)
+
+
+@task
+@log_call
+def deploy(clear=False, maintenance=False, migrate=False, reload_nginx=False):
+    """ Git pulls, installs requirements, collects static, then restarts
+    django.
+    """
+    if maintenance:
+        begin_maintenance()
+
+    pull()
+    install_requirements()
+    collect_static()
+
+    if clear:
+        clear_cache()
+
+    if migrate:
+        migrate_db()
+
+    restart_django()
+
+    if maintenance:
+        end_maintenance()
+
+    elif reload_nginx:
+        reload_nginx()
