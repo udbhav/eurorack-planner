@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from functools import wraps
-pfrom os import path
+from os import path
 
 from fabric.api import cd, env, hide, run as _run, sudo as _sudo, task
 from fabric.colors import blue, green, red, yellow
