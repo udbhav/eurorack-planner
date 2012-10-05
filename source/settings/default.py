@@ -128,12 +128,9 @@ CACHES = {
 }
 
 # Haystack
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': p(PROJECT_PATH, '../whoosh_index'),
-    },
-}
+HAYSTACK_SITECONF = 'search_sites'
+HAYSTACK_SEARCH_ENGINE = 'whoosh'
+HAYSTACK_WHOOSH_PATH = p(PROJECT_PATH, '../whoosh_index')
 
 # Django Compressor
 COMPRESS_PRECOMPILERS = (

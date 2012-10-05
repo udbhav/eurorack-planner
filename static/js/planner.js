@@ -138,7 +138,7 @@
       }
 
       if (!local_data) {
-        $.getJSON("/modules/module/" + module_id + "?format=json", function(data) {
+        $.getJSON("/modules/" + module_id + "?format=json", function(data) {
           var module = data.module[0].fields;
           module.image = '/media/' + module.image;
           insert_module_html(module);
