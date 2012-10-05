@@ -17,7 +17,23 @@ def prod():
     env.venv = path.join(env.base, "env/")
     env.process = "twinsister"
     env.public = path.join(env.base, "public/")
+
+    templates = path.join(env.app, "source/templates/")
     env.maintenance_file = path.join(templates, "maintenance.html")
+
+def log_call(func):
+    @wraps(func)
+    def logged(*args, **kawrgs):
+        name = func.__name__.replace('_', ' ').title()
+        line = "-" * len(name)
+        out = ""
+
+        for val in [name, line]:
+            out += "\n   %s" % val
+        print green(out)
+
+        return func(*args, **kawrgs)
+    return logged
 
 def print_command(command):
     print "   %s %s %s\n" % (blue('$', bold=True),
