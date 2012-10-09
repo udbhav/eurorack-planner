@@ -145,7 +145,7 @@
             "data-5v": module.current_5v,
             "data-name": module.name
           })
-          .append('<img src="' + module.full_image_url + '" alt="' + module.name + '">')
+          .append('<img src="' + module.image + '" alt="' + module.name + '">')
           .css({ left: left, top: top, width: 10*module.hp })
           .appendTo(self.$element.find(".case"));
         self.make_draggable();
@@ -155,8 +155,8 @@
       }
 
       if (!local_data) {
-        $.getJSON("/modules/" + module_id + "?format=json", function(data) {
-          var module = data.module[0].fields;
+        $.getJSON("/modules/json/" + module_id, function(data) {
+          var module = data.module;
           insert_module_html(module);
         });
       } else {
@@ -165,7 +165,7 @@
         module.current_12v = local_data['12v'];
         module.current_5v = local_data['5v'];
         module.name = local_data['name'];
-        module.full_image_url = local_data['full_image_url'];
+        module.image = local_data['image'];
         insert_module_html(module, local_data["left"], local_data["top"]);
       }
     },
@@ -207,7 +207,7 @@
             'size': $module.attr("data-hp"),
             '12v': $module.attr("data-12v"),
             '5v': $module.attr("data-5v"),
-            'full_image_url': $module.find("img").attr("src"),
+            'image': $module.find("img").attr("src"),
             'left': $module.css("left"),
             'top': $module.css("top"),
             'name': $module.attr("data-name")
