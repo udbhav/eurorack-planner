@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.generic.list import MultipleObjectTemplateResponseMixin, BaseListView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, BaseDetailView
 from django.db import models
@@ -35,7 +35,6 @@ class JSONResponseMixin(object):
                 data = json.dumps(v)
 
             new_context += "\"%s\": %s" % (k, data)
-
             i += 1
             if i != len(context.items()):
                 new_context += ", "
@@ -44,27 +43,10 @@ class JSONResponseMixin(object):
 
         return new_context
 
-class HybridListView(JSONResponseMixin, MultipleObjectTemplateResponseMixin, BaseListView):
-    def render_to_response(self, context):
-        # Look for a 'format=json' GET argument
-        if self.request.GET.get('format','html') == 'json':
-            return JSONResponseMixin.render_to_response(self, context)
-        else:
-            return MultipleObjectTemplateResponseMixin.render_to_response(self, context)
-
-class HybridDetailView(JSONResponseMixin, SingleObjectTemplateResponseMixin, BaseDetailView):
-    def render_to_response(self, context):
-        # Look for a 'format=json' GET argument
-        if self.request.GET.get('format','html') == 'json':
-            return JSONResponseMixin.render_to_response(self, context)
-        else:
-            return SingleObjectTemplateResponseMixin.render_to_response(self, context)
-
-
-class ManufacturersView(HybridListView):
+class ManufacturersView(ListView):
     model = Manufacturer
 
-class ModulesView(HybridListView):
+class ModulesView(ListView):
     model = Module
     paginate_by = 50
 
@@ -80,8 +62,42 @@ class ModulesByManufacturer(ModulesView):
         context['manufacturer'] = self.manufacturer
         return context
 
-class ModuleView(HybridDetailView):
+class ModuleView(DetailView):
     model = Module
+
+class JSONModuleView(JSONResponseMixin, BaseDetailView):
+    model = Module
+    context_object_name = 'module'
+    
+    def get_object(self):
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        module = get_object_or_404(Module, pk=pk)
+        module_object = {
+            'id': module.id,
+            'name': module.name,
+            'hp': module.hp,
+            'depth': module.depth,
+            'current_12v': module.current_12v,
+            'negative_current_12v': module.negative_current_12v,
+            'msrp': str(module.msrp),
+            'planner_url': module.get_absolute_url(),
+            'url': module.url,
+            'current_5v': module.current_5v,
+            }
+
+        if module.image:
+            module_object['image'] = module.image.url
+        else:
+            module_object['image'] = None
+        
+        if module.manufacturer:
+            module_object['manufacturer'] = module.manufacturer.name
+            module_object['manufacturer_id'] = module.manufacturer.id
+        else:
+            module_object['manufacturer'] = None
+            module_object['manufacturer_id'] = None
+
+        return module_object
 
 
 def planner(request):

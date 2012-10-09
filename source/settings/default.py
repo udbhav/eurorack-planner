@@ -78,7 +78,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 
     # Third party middleware
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     # Cache fetch is always last!
     'django.middleware.cache.FetchFromCacheMiddleware',

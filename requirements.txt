@@ -1,5 +1,5 @@
 Django==1.4.1
-Fabric==1.4.3
+PIL==1.1.7
 South==0.7.6
 Whoosh==2.4.1
 argparse==1.2.1
@@ -10,6 +10,7 @@ django-compressor==1.2
 django-debug-toolbar==0.9.4
 django-extensions==0.9
 django-haystack==1.2.7
+django-imagekit==2.0.2
 django-storages==1.1.5
 gunicorn==0.14.6
 python-memcached==1.48

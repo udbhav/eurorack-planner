@@ -17,14 +17,18 @@ body.planner_body {
   color: #eee;
 }
 
+.planner {
+  position: relative;
+}
+
 .planner .case {
   position: relative;
   margin-left: 100px;
 }
 
 .planner .euro_row {
-  height: 210px;
-  background: url(../images/euro_rails.jpg);
+  height: 262px;
+  background: url(../images/euro_rails.png);
   position: relative;
   z-index: 1;
 }
@@ -35,7 +39,7 @@ body.planner_body {
   top: 0;
   font-size: 12px;
   line-height: 1.4em;
-  height: 190px;
+  height: 242px;
   padding: 10px;
   background: black;
   width: 80px;
@@ -49,10 +53,17 @@ body.planner_body {
 }
 
 .planner .module {
-  height: 210px;
-  width: 8px;
+  height: 262px;
+  width: 10px;
   z-index: 2;
   position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+.planner .module.selected {
+  border: 1px solid yellow;
 }
 
 .planner .module img {
@@ -102,4 +113,21 @@ body.planner_body {
 
 .planner .ui-autocomplete .ui-state-hover {
   background: #eaeaea;
+}
+
+.planner .module_trash {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 46px;
+  height: 225px;
+  padding: 20px 10px;
+  background: #222;
+  color: #666;
+  text-align: center;
+  
+}
+
+.planner .module_trash.active {
+  display: block;
 }

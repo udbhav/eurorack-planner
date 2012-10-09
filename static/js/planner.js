@@ -12,7 +12,7 @@
   Planner.prototype = {
     initialize: function() {
       this.row_autoincrement = 1;
-      this.bind_events();
+      this.bind_menu_events();
       this.make_draggable();
       this.autocomplete();
       
@@ -25,13 +25,29 @@
 
     make_draggable: function() {
       var self = this;
+
       this.$element.find(".module").draggable({
         snap: ".euro_row, .module",
-        containment: "parent"
+        containment: "parent",
+        start: function(event, ui) {
+          self.select_module(this);
+          self.$element.find(".module_trash").addClass("active");
+        },
+        stop: function() {
+          self.$element.find(".module_trash").removeClass("active");
+        }
       });
+
       this.$element.find(".euro_row").droppable({
         drop: function(event, ui) {
           $(ui.draggable).attr("data-row", $(this).attr("data-id"));
+          self.calculate_info();
+        }
+      });
+
+      this.$element.find(".module_trash").droppable({
+        drop: function(event, ui) {
+          $(ui.draggable).remove();
           self.calculate_info();
         }
       });
@@ -69,7 +85,7 @@
       );
 
       var row = $('<li class="euro_row"></div>')
-        .css("width", 8*size)
+        .css("width", 10*size)
         .attr("data-size", size)
         .attr("data-id", row_id)
         .append(info_window)
@@ -99,7 +115,7 @@
     realign_modules: function() {
       var self = this;
       this.$element.find(".euro_row").each(function(index, row) {
-        var top = 210 * index;
+        var top = 262 * index;
         self.$element.find(".module[data-row=" + $(row).attr("data-id") + "]").css("top", top);
       });
     },
@@ -129,10 +145,11 @@
             "data-5v": module.current_5v,
             "data-name": module.name
           })
-          .append('<img src="' + module.image + '" alt="' + module.name + '">')
-          .css({ left: left, top: top, width: 8*module.hp })
+          .append('<img src="' + module.full_image_url + '" alt="' + module.name + '">')
+          .css({ left: left, top: top, width: 10*module.hp })
           .appendTo(self.$element.find(".case"));
         self.make_draggable();
+        self.bind_module_events(inserted_module)
         self.calculate_info();
         return inserted_module;
       }
@@ -140,7 +157,6 @@
       if (!local_data) {
         $.getJSON("/modules/" + module_id + "?format=json", function(data) {
           var module = data.module[0].fields;
-          module.image = '/media/' + module.image;
           insert_module_html(module);
         });
       } else {
@@ -149,7 +165,7 @@
         module.current_12v = local_data['12v'];
         module.current_5v = local_data['5v'];
         module.name = local_data['name'];
-        module.image = local_data['image'];
+        module.full_image_url = local_data['full_image_url'];
         insert_module_html(module, local_data["left"], local_data["top"]);
       }
     },
@@ -191,7 +207,7 @@
             'size': $module.attr("data-hp"),
             '12v': $module.attr("data-12v"),
             '5v': $module.attr("data-5v"),
-            'image': $module.find("img").attr("src"),
+            'full_image_url': $module.find("img").attr("src"),
             'left': $module.css("left"),
             'top': $module.css("top"),
             'name': $module.attr("data-name")
@@ -238,7 +254,7 @@
       });
     },
 
-    bind_events: function() {
+    bind_menu_events: function() {
       var self = this;
 
       function toggle_classes(element, form) {
@@ -325,6 +341,30 @@
         self.save_to_file();
         $(this).siblings().removeClass("active");
         self.$element.find(".actions form").removeClass("active");
+      });
+
+      
+    },
+
+    select_module: function(module) {
+      var $module = $(module);
+      this.$element.find(".module.selected").removeClass("selected");
+      $module.addClass("selected");
+    },
+
+    deselect_module: function(module) {
+      var $module = $(module);
+      $module.removeClass("selected");
+    },
+
+    bind_module_events: function(module) {
+      var self = this;
+      $(module).on("click", function() {
+        if ($(this).hasClass("selected")) {
+          self.deselect_module(module);
+        } else {
+          self.select_module(module);
+        }
       });
     },
 
