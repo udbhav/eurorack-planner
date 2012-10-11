@@ -28,6 +28,7 @@
 
       this.$element.find(".module").draggable({
         snap: ".euro_row, .module",
+        snapTolerance: 5,
         containment: "parent",
         start: function(event, ui) {
           self.select_module(this);
