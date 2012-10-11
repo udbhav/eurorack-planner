@@ -11,7 +11,7 @@ Setup
 
 * Use pip to install the requirements::
 
-    pip install requirements.txt
+    pip install -r requirements.txt
 
 * Create /source/settings/local.py (see /source/settings/local.example.py)
 
