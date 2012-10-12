@@ -30,3 +30,5 @@ DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': True,
  }
 
+# Email testing
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

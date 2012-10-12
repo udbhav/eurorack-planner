@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load bootstrap_tags %}
+
+{% block content %}
+<div class="register">
+<h1>Login</h1>
+
+<form method="post" action="{% url django.contrib.auth.views.login %}" class="form-horizontal">{% csrf_token %}
+  {{ form|as_bootstrap }}
+  <input type="hidden" name="next" value="{{ next }}" />
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Login</button>
+  </div>
+</form>
+<p><a href="{% url auth_password_reset %}">Forgot</a> your password?  <a href="{% url registration_register %}">Need an account</a>?</p>
+</div>
+{% endblock %}

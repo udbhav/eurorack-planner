@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=200)
@@ -28,15 +29,17 @@ class ModuleImageURLField(object):
 
 class Module(models.Model):
     name = models.CharField(max_length=200)
-    manufacturer = models.ForeignKey(Manufacturer)
+    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
     image = models.ImageField(blank=True,null=True,upload_to="modules/images/")
-    hp = models.IntegerField(blank=True, null=True)
+    hp = models.IntegerField("HP", blank=True, null=True)
     depth = models.IntegerField(blank=True, null=True)
-    current_12v = models.IntegerField(blank=True, null=True)
-    negative_current_12v = models.IntegerField(blank=True, null=True)
-    current_5v = models.IntegerField(blank=True, null=True)
-    msrp = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    current_12v = models.IntegerField("+12v (mA)", blank=True, null=True)
+    negative_current_12v = models.IntegerField("-12v (mA)", blank=True, null=True)
+    current_5v = models.IntegerField("5v (mA)", blank=True, null=True)
+    msrp = models.DecimalField("MSRP ($)", max_digits=8, decimal_places=2, blank=True, null=True)
     url = models.CharField(blank=True, max_length=200)
+    user = models.ForeignKey(User, blank=True, null=True)
+    custom = models.BooleanField(blank=True)
 
     def __unicode__(self):
         return self.name

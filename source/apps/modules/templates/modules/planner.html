@@ -1,44 +1,136 @@
 {% extends "base.html" %}
 
-{% block planner_nav %} class="active"{% endblock %}
 {% block body_class %}planner_body{% endblock %}
 
 {% block content %}
 <div class="planner">
-  <div class="actions">
-  <div class="btn-group">
-    <button class="btn btn_add_module btn-small">Add Module</button>
-    <button class="btn btn_add_row btn-small">Add Row</button>
-    <button class="btn btn_save_locally btn-small">Save Locally</button>
-    <button class="btn btn_load_from_file btn-small">Load From File</button>
-    <button class="btn btn_save_to_file btn-small">Save To File</button>
-    <button class="btn btn_clear btn-danger btn-small">Clear All</button>
+  <div class="actions btn-toolbar">
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Add  <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="#add_row" role="button" data-toggle="modal">Add Row</a></li>
+        <li class="divider"></li>
+        <li><a href="#add_module" role="button" data-toggle="modal">Add Module</a></li>
+        <li class="divider"></li>
+        <li><a href="#add_custom_module" role="button" data-toggle="modal">Add Custom Module</a></li>
+        <li><a href="{% url custom_modules %}">Manage Custom Modules</a></li>
+      </ul>
+    </div>
+
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Load  <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="#" class="btn_load_locally">Load Local Setup</a></li>
+        <li><a href="#" class="">Load Online Setup</a></li>
+        <li><a href="#load_from_file" role="button" data-toggle="modal">Load Setup From File</a></li>
+      </ul>
+    </div>
+
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Save  <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="#" class="btn_save_locally">Save Local Setup</a></li>
+        <li><a href="#" class="">Save Online Setup</a></li>
+        <li><a href="#" class="btn_save_to_file">Save Setup To File</a></li>
+      </ul>
+    </div>
+
+    <button class="btn btn_delete_selected btn-danger">Delete Selected</button>
+    <button class="btn btn_clear btn-danger">Clear All</button>
   </div>
-  <form class="add_row form-inline">
-    <input type="text" name="width" value="" placeholder="Width (in HP)" class="input-small">
-    <button type="submit" class="btn btn-primary">Add</button>
-  </form>
-  <form class="add_module form-inline">
-    <input type="hidden" name="module_id" value="">
-    <input type="text" name="autocomplete" class="module_autocomplete" placeholder="Type a name to start searching">
-    <button type="submit" class="btn btn-primary">Add</button>
-  </form>
-  <form class="load_from_file form-inline">
-    <input type="file" name="file">
-    <div class="error"></div>
-  </form>
+
+
+  <div class="modal hide fade" id="add_row">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Add Row</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-inline">
+        <input type="text" name="width" value="" placeholder="Width (in HP)">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary btn_add">Add</button>
+    </div>
+  </div>
+
+  <div class="modal hide fade" id="add_module">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Add Module</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-inline">
+        <input type="hidden" name="module_id" value="">
+        <input type="text" name="autocomplete" class="module_autocomplete" placeholder="Type a name to start searching">
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary btn_add">Add</button>
+    </div>
+  </div>
+
+  <div class="modal hide fade" id="add_custom_module">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Add Custom Module</h3>
+    </div>
+    <div class="modal-body">
+      {% if custom_modules %}
+      <form class="form-inline">
+        <select name="module_id">
+          {% for module in custom_modules %}
+          <option value="{{ module.id }}">{{ module }}</option>
+          {% endfor %}
+        </select>
+      </form>
+      {% else %}
+      You haven't uploaded any modules yet. <a href="{% url new_custom_module %}">Upload one</a>
+      {% endif %}
+    </div>
+    <div class="modal-footer">
+      {% if custom_modules %}
+      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary btn_add">Add</button>
+      {% else %}
+      <button class="btn" data-dismiss="modal">Ok</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="modal hide fade" id="load_from_file">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Load Setup From File</h3>
+    </div>
+    <div class="modal-body">
+      <form class="load_from_file form-inline">
+        <input type="file" name="file">
+        <div class="error"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Cancel</button>
+    </div>
+  </div>
 
   <form class="save_to_file" target="_blank" method="post" action="/modules/save-to-file/">
     {% csrf_token %}
     <input type="hidden" name="preset" value="">
   </form>
-  </div>
-
-  <div class="module_trash"><i class="icon-trash icon-white"></i><br>Drop Here To Delete</div>
 
   <div class="case">
-  <ul class="euro_rows unstyled">
-  </ul>
+    <ul class="euro_rows unstyled">
+    </ul>
   </div>
 </div>
 {% endblock content %}

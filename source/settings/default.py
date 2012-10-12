@@ -115,6 +115,8 @@ INSTALLED_APPS = (
     'south',
     'compressor',
     'storages',
+    'registration',
+    'django_forms_bootstrap',
 
 ) + PROJECT_APPS
 
@@ -144,3 +146,8 @@ DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': True,
 }
 INTERNAL_IPS = ("127.0.0.1",)
+
+
+# Django Registration
+ACCOUNT_ACTIVATION_DAYS = 14
+LOGIN_REDIRECT_URL = '/'

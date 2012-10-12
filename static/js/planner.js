@@ -32,23 +32,12 @@
         containment: "parent",
         start: function(event, ui) {
           self.select_module(this);
-          self.$element.find(".module_trash").addClass("active");
-        },
-        stop: function() {
-          self.$element.find(".module_trash").removeClass("active");
         }
       });
 
       this.$element.find(".euro_row").droppable({
         drop: function(event, ui) {
           $(ui.draggable).attr("data-row", $(this).attr("data-id"));
-          self.calculate_info();
-        }
-      });
-
-      this.$element.find(".module_trash").droppable({
-        drop: function(event, ui) {
-          $(ui.draggable).remove();
           self.calculate_info();
         }
       });
@@ -258,51 +247,32 @@
     bind_menu_events: function() {
       var self = this;
 
-      function toggle_classes(element, form) {
-        $(element).toggleClass("active");
-        $(form).toggleClass("active");
-
-        if ($(element).hasClass("active")) {
-          $(element).siblings().removeClass("active");
-          $(form).siblings().removeClass("active");
-        }
-      }
-
-      this.$element.find(".btn_add_row").on("click", function() {
-        var form = self.$element.find(".add_row");
-        toggle_classes(this, form);
-        form.find("input[type=text]").focus();
-        return false;
+      this.$element.find(".modal .btn_add").on("click", function() {
+        $(this).parents(".modal").find("form").submit();
       });
 
-      this.$element.find(".btn_add_module").on("click", function() {
-        var form = self.$element.find(".add_module");
-        toggle_classes(this, form);
-        form.find("input[type=text]").focus();
-        return false;
-      });
-
-      this.$element.find(".btn_load_from_file").on("click", function() {
-        var form = self.$element.find(".load_from_file");
-        toggle_classes(this, form);
-        return false;
-      });
-
-      this.$element.find(".add_row").on("submit", function() {
+      this.$element.find("#add_row form").on("submit", function() {
         var width = parseInt($(this).find("input[name=width]").val());
         if (!isNaN(width)) self.add_row(width);
-        toggle_classes($(".btn_add_row"), $(this));
+        $(this).find("input[name=width]").val("");
+        $("#add_row").modal('hide');
         return false;
       });
 
-
-      this.$element.find(".add_module").on("submit", function() {
+      this.$element.find("#add_module form").on("submit", function() {
         self.add_module($(this).find("input[name=module_id]").val(), self.$element.find(".euro_row").attr("data-id"));
-        toggle_classes($(".btn_add_module"), $(this));
+        $(this).find("input[name=module_id], input[name=autocomplete]").val("");
+        $("#add_module").modal('hide');
         return false;
       });
 
-      this.$element.find(".load_from_file input[type=file]").on("change", function(event) {
+      this.$element.find("#add_custom_module form").on("submit", function() {
+        self.add_module($(this).find("option:selected").val(), self.$element.find(".euro_row").attr("data-id"));
+        $("#add_custom_module").modal('hide');
+        return false;
+      });
+
+      this.$element.find("#load_from_file input[type=file]").on("change", function(event) {
         var file = event.target.files[0];
         if (file.type == "application/json") {
           var reader = new FileReader();
@@ -310,14 +280,14 @@
             return function(e) {
               self.clear();
               self.load(JSON.parse(e.target.result));
-              toggle_classes(self.$element.find(".btn_load_from_file"), self.$element.find(".load_from_file"));
+              $("#load_from_file").modal('hide');
             }
           })(file);
           reader.readAsText(file);
           
-          self.$element.find(".load_from_file .error").html('');
+          self.$element.find("#load_from_file .error").html('');
         } else {
-          self.$element.find(".load_from_file .error").html('<div class="alert small">Invalid file type!</div>');
+          self.$element.find("#load_from_file .error").html('<div class="alert small">Invalid file type!</div>');
         }
 
       });
@@ -326,25 +296,26 @@
         if (confirm("Are you sure?")) {
           self.clear();
         }
+      });
 
-        $(this).siblings().removeClass("active");
-        self.$element.find(".actions form").removeClass("active");
+      this.$element.find(".btn_delete_selected").on("click", function() {
+        self.$element.find(".module.selected").remove();
+        self.calculate_info();
         return false;
+      });
+
+      this.$element.find(".btn_load_locally").on("click", function() {
+        self.clear();
+        self.load(JSON.parse(localStorage.planner_setup));
       });
 
       this.$element.find(".btn_save_locally").on("click", function() {
         self.save_locally();
-        $(this).siblings().removeClass("active");
-        self.$element.find(".actions form").removeClass("active");
       });
 
       this.$element.find(".btn_save_to_file").on("click", function() {
         self.save_to_file();
-        $(this).siblings().removeClass("active");
-        self.$element.find(".actions form").removeClass("active");
       });
-
-      
     },
 
     select_module: function(module) {
@@ -373,11 +344,11 @@
       var self = this;
       this.$element.find(".module_autocomplete").autocomplete({
         autoFocus: true,
-        appendTo: '.add_module',
+        appendTo: '#add_module form',
         position: {my: "left top", at: "left bottom"},
         source: "/search/autocomplete/",
         select: function(event, ui) {
-          self.$element.find(".add_module input[name=module_id]").val(ui.item.id);
+          self.$element.find("#add_module input[name=module_id]").val(ui.item.id);
         }
       });
     }

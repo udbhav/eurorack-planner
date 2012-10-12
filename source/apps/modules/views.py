@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.list import MultipleObjectTemplateResponseMixin, BaseListView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, BaseDetailView
 from django.db import models
@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
 from apps.modules.models import Manufacturer, Module
+from apps.modules.forms import CustomModuleForm
 
 class JSONResponseMixin(object):
     def render_to_response(self, context):
@@ -99,14 +100,60 @@ class JSONModuleView(JSONResponseMixin, BaseDetailView):
 
         return module_object
 
+class CustomModulesView(ListView):
+    model = Module
+    template_name = "modules/custom_module_list.html"
 
+    def get_queryset(self):
+        return Module.objects.filter(user=self.request.user)
+
+class NewCustomModuleView(CreateView):
+    model = Module
+    form_class = CustomModuleForm
+    success_url = '/modules/custom/'
+
+    def get_form(self, form_class):
+        kwargs = self.get_form_kwargs()
+        kwargs['instance'] = Module(custom=True, user=self.request.user)
+        return CustomModuleForm(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(NewCustomModuleView, self).get_context_data(**kwargs)
+        context['create'] = True
+        return context
+
+class EditCustomModuleView(UpdateView):
+    model = Module
+    form_class = CustomModuleForm
+    success_url = '/modules/custom/'
+
+    def form_valid(self, form):
+        module = form.save(commit=False)
+        if module.user == self.request.user:
+            self.object = form.save()
+            return http.HttpResponseRedirect(self.get_success_url())
+        else:
+            return http.HttpResponseForbidden()
+
+class DeleteCustomModuleView(DeleteView):
+    model = Module
+    success_url = '/modules/custom/'
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.user != request.user:
+            return http.HttpResponseForbidden()
+        else:
+            self.object.delete()
+            return http.HttpResponseRedirect(self.get_success_url())
+    
 def planner(request):
-    manufacturers = Manufacturer.objects.all()
-    modules = Module.objects.all()
+    if request.user.is_authenticated():
+        custom_modules = Module.objects.filter(user=request.user)
+    else:
+        custom_modules = []
 
     return render_to_response('modules/planner.html', {
-            'manufacturers': manufacturers,
-            'modules': modules,
+            'custom_modules': custom_modules,
     }, context_instance=RequestContext(request))
 
 def save_to_file(request):

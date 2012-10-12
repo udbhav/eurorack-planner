@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load bootstrap_tags %}
+
+{% block content %}
+<div class="manage">
+  <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if create %}
+    <legend>Upload a Module</legend>
+    {% else %}
+    <legend>Edit</legend>
+    {% endif %}
+    {{ form|as_bootstrap }}
+    <div class="form-actions">
+      <a href="/modules/custom/" class="btn">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+
+  </form>
+</div>
+{% endblock content %}
+

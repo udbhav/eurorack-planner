@@ -12,6 +12,7 @@ urlpatterns = patterns(
     url(r'^search/', include('apps.search.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include('registration.backends.default.urls')),
 )
 
 if getattr(settings, 'LOCAL_SERVE', False):

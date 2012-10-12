@@ -7,10 +7,6 @@ body {
   margin: 0 10px;
 }
 
-/* Customize Bootsrap */
-
-
-
 /* Planner */
 body.planner_body {
   background: #111;
@@ -76,21 +72,6 @@ body.planner_body {
   position: relative;
 }
 
-.planner .actions form {
-  display: none;
-  position: absolute;
-  background: #333;
-  padding: 10px;
-  border-radius: 0 0 10px 0;
-  left: 0;
-  margin-bottom: 0;
-  z-index: 3;
-}
-
-.planner .actions form.active {
-  display: block;
-}
-
 .planner .ui-autocomplete {
   margin: 0;
   width: 220px !important;
@@ -130,4 +111,40 @@ body.planner_body {
 
 .planner .module_trash.active {
   display: block;
+}
+
+.planner .dropdown-menu {
+  color: black;
+}
+
+.planner .modal {
+  color: #666;
+}
+
+.planner #add_module {
+  overflow: visible;
+}
+
+/* Accounts */
+.register {
+  width: 500px;
+  margin: 0 auto;
+}
+
+/* Manage */
+.manage {
+  width: 800px;
+  margin: 0 auto;
+}
+
+.manage .custom_modules form {
+  display: none
+}
+
+.manage .custom_modules li {
+  line-height: 2em;
+}
+
+.manage .custom_modules li:hover form {
+  display: inline;
 }
