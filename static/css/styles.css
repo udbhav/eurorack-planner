@@ -125,6 +125,11 @@ body.planner_body {
   overflow: visible;
 }
 
+.credit {
+  padding-top: 20px;
+  color: #666;
+}
+
 /* Accounts */
 .register {
   width: 500px;
