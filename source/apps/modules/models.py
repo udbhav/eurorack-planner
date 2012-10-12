@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFit
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=200)
@@ -31,6 +33,7 @@ class Module(models.Model):
     name = models.CharField(max_length=200)
     manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
     image = models.ImageField(blank=True,null=True,upload_to="modules/images/")
+    medium_image = ImageSpecField([ResizeToFit(width=800, height=325),], image_field='image', format='JPEG', options={'quality': 90})
     hp = models.IntegerField("HP", blank=True, null=True)
     depth = models.IntegerField(blank=True, null=True)
     current_12v = models.IntegerField("+12v (mA)", blank=True, null=True)

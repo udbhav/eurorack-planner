@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     'storages',
     'registration',
     'django_forms_bootstrap',
+    'imagekit',
 
 ) + PROJECT_APPS
 

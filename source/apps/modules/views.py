@@ -87,7 +87,7 @@ class JSONModuleView(JSONResponseMixin, BaseDetailView):
             }
 
         if module.image:
-            module_object['image'] = module.image.url
+            module_object['image'] = module.medium_image.url
         else:
             module_object['image'] = None
         
