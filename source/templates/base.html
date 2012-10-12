@@ -30,6 +30,11 @@
       <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="/">Eurorack Planner</a>
+          <ul class="nav">
+            <li{% block planner_nav %}{% endblock %}><a href="{% url planner %}">Planner</a></li>
+            <li{% block about_nav %}{% endblock %}><a href="{% url about %}">About</a></li>
+          </ul>
+
           <ul class="nav pull-right">
             {% if request.user.is_authenticated %}
             <li><a href="{% url auth_logout %}">Logout</a></li>
