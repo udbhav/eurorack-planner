@@ -133,7 +133,9 @@
             "data-id": module_id,
             "data-hp": module.hp,
             "data-12v": module.current_12v,
+            "data-negative-12v": module.negative_current_12v,
             "data-5v": module.current_5v,
+            "data-msrp": module.msrp,
             "data-name": module.name
           })
           .append('<img src="' + module.image + '" alt="' + module.name + '">')
@@ -163,23 +165,46 @@
 
     calculate_info: function() {
       var self = this;
+      var total_hp = 0, available_hp = 0, total_current_12v = 0, total_negative_current_12v = 0, total_current_5v = 0, total_msrp = 0;
       this.$element.find(".euro_row").each(function(index, element) {
-        var hp = 0, current_12v = 0, current_5v = 0;
+        var hp = 0, current_12v = 0, negative_current_12v = 0, current_5v = 0, msrp = 0;
         self.$element.find(".module[data-row=" + $(element).attr("data-id") + "]").each(function(module_index, module_element) {
           var module_hp = parseInt($(module_element).attr("data-hp"));
           var module_12v = parseInt($(module_element).attr("data-12v"));
+          var module_negative_12v = parseInt($(module_element).attr("data-negative-12v"));
           var module_5v = parseInt($(module_element).attr("data-5v"));
+          var module_msrp = parseFloat($(module_element).attr("data-msrp"));
 
           if (!isNaN(module_hp)) hp += module_hp;
           if (!isNaN(module_12v)) current_12v += module_12v;
+          if (!isNaN(module_negative_12v)) negative_current_12v += module_negative_12v;
           if (!isNaN(module_5v)) current_5v += module_5v;
+          if (!isNaN(module_msrp)) msrp += module_msrp;
         });
         
         var html = "HP: " + hp + "/" + $(element).attr("data-size") + "<br>";
-        html += "12v: " + current_12v + "mA<br>";
+        html += "+12v: " + current_12v + "mA<br>";
+        html += "-12v: " + negative_current_12v + "mA<br>";
         html += "5v: " + current_5v + "mA<br>";
+        html += "MSRP: $" + msrp;
+
         $(element).find(".row_data").html(html);
+
+        available_hp += parseInt($(element).attr("data-size"));
+        total_hp += hp;
+        total_current_12v += current_12v;
+        total_negative_current_12v += negative_current_12v;
+        total_current_5v += current_5v;
+        total_msrp += msrp;
       });
+
+      var total_html = "<h4>Case Totals</h4>";
+      total_html += "HP: " + total_hp + "/" + available_hp + "<br>";
+      total_html += "+12v: " + total_current_12v + "mA<br>";
+      total_html += "-12v: " + total_negative_current_12v + "mA<br>";
+      total_html += "5v: " + total_current_5v + "mA<br>";
+      total_html += "MSRP: $" + total_msrp;
+      this.$element.find(".case_totals").html(total_html);
     },
 
     save: function() {
@@ -197,7 +222,9 @@
             'id': $module.attr("data-id"),
             'size': $module.attr("data-hp"),
             '12v': $module.attr("data-12v"),
+            'negative_12v': $module.attr("data-negative-12v"),
             '5v': $module.attr("data-5v"),
+            'msrp': $module.attr("data-msrp"),
             'image': $module.find("img").attr("src"),
             'left': $module.css("left"),
             'top': $module.css("top"),
