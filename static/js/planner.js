@@ -324,6 +324,11 @@
       this.$element.find(".btn_save_to_file").on("click", function() {
         self.save_to_file();
       });
+
+      // hack to fix bootstrap dropdown problem
+      $('a.dropdown-toggle, .dropdown-menu a').on('touchstart', function(e) {
+        e.stopPropagation();
+      });
     },
 
     select_module: function(module) {
