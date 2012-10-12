@@ -79,10 +79,10 @@
         .attr("data-size", size)
         .attr("data-id", row_id)
         .append(info_window)
-        .appendTo(this.$element.find(".euro_rows"));
+        .prependTo(this.$element.find(".euro_rows"));
       this.make_draggable();
+      this.realign_modules();
       this.calculate_info();
-
       return row;
     },
 
@@ -114,6 +114,7 @@
       this.$element.find(".module[data-row=" + row_id + "]").remove();
       this.$element.find(".euro_row[data-id=" + row_id + "]").remove();
       this.calculate_info();
+      this.realign_modules();
     },
 
     add_module: function(module_id, row_id, local_data) {
