@@ -259,11 +259,19 @@
         return false;
       });
 
+      this.$element.find("#add_row").on("shown", function() {
+        $("#add_row input[name=width]").focus();
+      });
+
       this.$element.find("#add_module form").on("submit", function() {
         self.add_module($(this).find("input[name=module_id]").val(), self.$element.find(".euro_row").attr("data-id"));
         $(this).find("input[name=module_id], input[name=autocomplete]").val("");
         $("#add_module").modal('hide');
         return false;
+      });
+
+      this.$element.find("#add_module").on("shown", function() {
+        $("#add_module input[name=autocomplete]").focus();
       });
 
       this.$element.find("#add_custom_module form").on("submit", function() {
