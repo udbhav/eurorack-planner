@@ -7,9 +7,10 @@ from django.utils import simplejson as json
 from django.core import serializers
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
 
-from apps.modules.models import Manufacturer, Module
-from apps.modules.forms import CustomModuleForm
+from apps.modules.models import Manufacturer, Module, Setup
+from apps.modules.forms import CustomModuleForm, SetupForm
 
 class JSONResponseMixin(object):
     def render_to_response(self, context):
@@ -145,15 +146,28 @@ class DeleteCustomModuleView(DeleteView):
         else:
             self.object.delete()
             return http.HttpResponseRedirect(self.get_success_url())
+
+class SetupsView(JSONResponseMixin, BaseListView):
+    model = Setup
+
+    def get_queryset(self):
+        return Setup.objects.filter(user=self.request.user)
+
+class SetupView(JSONResponseMixin, BaseDetailView):
+    model = Setup
+    context_object_name = 'setup'
     
 def planner(request):
     if request.user.is_authenticated():
         custom_modules = Module.objects.filter(user=request.user)
+        saved_setups = Setup.objects.filter(user=request.user)
     else:
         custom_modules = []
+        saved_setups = []
 
     return render_to_response('modules/planner.html', {
             'custom_modules': custom_modules,
+            'saved_setups': saved_setups,
     }, context_instance=RequestContext(request))
 
 def save_to_file(request):
@@ -164,3 +178,25 @@ def save_to_file(request):
         return response
     else:
         return http.HttpReponse('')
+
+def save_setup(request):
+    if request.method == 'POST' and request.user.is_authenticated():
+        setup = Setup(user = request.user)
+        form = SetupForm(request.POST, instance=setup)
+        if form.is_valid():
+            setup = form.save()
+            return http.HttpResponse(setup.id)
+        else:
+            assert False
+            return http.HttpResponse('did not save')            
+    else:
+        return http.HttpResponse('did not save')
+
+@login_required
+def delete_setup(request, pk):
+    setup = get_object_or_404(Setup, pk=pk)
+    if request.method == 'POST' and setup.user == request.user:
+        setup.delete()
+        return http.HttpResponse('Deleted')
+    else:
+        return http.HttpResponseForbidden()

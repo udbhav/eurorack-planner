@@ -1,22 +1,19 @@
-{% extends "base.html" %}
+{% extends "modules/manage_base.html" %}
 
-{% block content %}
-<div class="manage">
-  <h1>Custom Modules</h1>
-
-  <p>
-    <a href="{% url new_custom_module %}" class="btn btn-primary">Upload a Module</a>
-  </p>
-  <p>
-    <ul class="unstyled custom_modules">
-      {% for module in object_list %}
-      <li>
-        <a href="{% url edit_custom_module pk=module.id %}">{{ module }}</a>
-        <form method="post" action="{% url delete_custom_module pk=module.id %}">{% csrf_token %}<button type="submit" class="btn btn-small btn-danger">Delete</button></form>
-      </li>
-      {% endfor %}
-    </ul>
-  </p>
-</div>
-{% endblock content %}
+{% block manage_content %}
+<h1>Custom Modules</h1>
+<p>
+  <a href="{% url new_custom_module %}" class="btn btn-primary">Upload a Module</a>
+</p>
+<p>
+  <ul class="unstyled custom_modules">
+    {% for module in object_list %}
+    <li>
+      <a href="{% url edit_custom_module pk=module.id %}">{{ module }}</a>
+      <form method="post" action="{% url delete_custom_module pk=module.id %}">{% csrf_token %}<button type="submit" class="btn btn-small btn-danger">Delete</button></form>
+    </li>
+    {% endfor %}
+  </ul>
+</p>
+{% endblock manage_content %}
 

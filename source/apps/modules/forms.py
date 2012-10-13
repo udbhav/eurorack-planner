@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.modules.models import Module
+from apps.modules.models import Module, Setup
 
 class CustomModuleForm(forms.ModelForm):
     def clean_hp(self):
@@ -28,3 +28,8 @@ class CustomModuleForm(forms.ModelForm):
             'current_5v',
             'msrp',
             )
+
+class SetupForm(forms.ModelForm):
+    class Meta:
+        model = Setup
+        fields = ('name','preset')

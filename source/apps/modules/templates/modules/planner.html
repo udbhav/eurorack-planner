@@ -11,9 +11,9 @@
         Add  <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <li><a href="#add_row" role="button" data-toggle="modal">Add Row</a></li>
-        <li class="divider"></li>
         <li><a href="#add_module" role="button" data-toggle="modal">Add Module</a></li>
+        <li class="divider"></li>
+        <li><a href="#add_row" role="button" data-toggle="modal">Add Row</a></li>
         <li class="divider"></li>
         <li><a href="#add_custom_module" role="button" data-toggle="modal">Add Custom Module</a></li>
         <li><a href="{% url custom_modules %}">Manage Custom Modules</a></li>
@@ -25,7 +25,7 @@
         Load  <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <li><a href="#" class="btn_load_locally">Load Local Setup</a></li>
+        <li><a href="#load_online_setup" role="button" data-toggle="modal">Load Setup</a></li>
         <li><a href="#load_from_file" role="button" data-toggle="modal">Load Setup From File</a></li>
       </ul>
     </div>
@@ -35,7 +35,7 @@
         Save  <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <li><a href="#" class="btn_save_locally">Save Local Setup</a></li>
+        <li><a href="#save_online_setup" role="button" data-toggle="modal">Save Setup</a></li>
         <li><a href="#" class="btn_save_to_file">Save Setup To File</a></li>
       </ul>
     </div>
@@ -100,6 +100,61 @@
       {% if custom_modules %}
       <button class="btn" data-dismiss="modal">Cancel</button>
       <button class="btn btn-primary btn_add">Add</button>
+      {% else %}
+      <button class="btn" data-dismiss="modal">Ok</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="modal hide fade" id="load_online_setup">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Load Setup</h3>
+    </div>
+    <div class="modal-body">
+      {% if saved_setups %}
+      <form class="form-inline">
+        <select name="setup_id">
+          {% for setup in saved_setups %}
+          <option value="{{ setup.id }}">{{ setup.name }}</option>
+          {% endfor %}
+        </select>
+      </form>
+      {% else %}
+      You haven't saved any setups yet.
+      {% endif %}
+    </div>
+    <div class="modal-footer">
+      {% if saved_setups %}
+      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button class="btn btn-danger btn_delete">Delete</button>
+      <button class="btn btn-primary btn_add">Load</button>
+      {% else %}
+      <button class="btn" data-dismiss="modal">Ok</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="modal hide fade" id="save_online_setup">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Save Setup</h3>
+    </div>
+    <div class="modal-body">
+      {% if request.user.is_authenticated %}
+      <form class="form-inline" method="post" action="{% url save_online_setup %}">
+        {% csrf_token %}
+        <input name="name" type="text" placeholder="Name">
+        <input type="hidden" name="preset" value="">
+      </form>
+      {% else %}
+      You need to <a href="{% url registration_register %}">register</a> to save setups online.  You can still save to file.
+      {% endif %}
+    </div>
+    <div class="modal-footer">
+      {% if request.user.is_authenticated %}
+      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary btn_add">Save</button>
       {% else %}
       <button class="btn" data-dismiss="modal">Ok</button>
       {% endif %}

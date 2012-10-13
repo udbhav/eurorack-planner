@@ -54,3 +54,10 @@ class Module(models.Model):
     def get_absolute_url(self):
         return ('module', [str(self.id)])
 
+class Setup(models.Model):
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(User)
+    preset = models.TextField()
+
+    def __unicode__(self):
+        return self.name

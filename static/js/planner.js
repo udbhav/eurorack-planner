@@ -11,8 +11,10 @@
 
   Planner.prototype = {
     initialize: function() {
+      this.django_csrf();
       this.row_autoincrement = 1;
       this.bind_menu_events();
+      this.bind_refresh();
       this.make_draggable();
       this.autocomplete();
       
@@ -38,7 +40,7 @@
       this.$element.find(".euro_row").droppable({
         drop: function(event, ui) {
           $(ui.draggable).attr("data-row", $(this).attr("data-id"));
-          self.calculate_info();
+          self.refresh();
         }
       });
     },
@@ -82,7 +84,7 @@
         .prependTo(this.$element.find(".euro_rows"));
       this.make_draggable();
       this.realign_modules();
-      this.calculate_info();
+      this.refresh();
       return row;
     },
 
@@ -113,7 +115,7 @@
     delete_row: function(row_id) {
       this.$element.find(".module[data-row=" + row_id + "]").remove();
       this.$element.find(".euro_row[data-id=" + row_id + "]").remove();
-      this.calculate_info();
+      this.refresh();
       this.realign_modules();
     },
 
@@ -143,7 +145,7 @@
           .appendTo(self.$element.find(".case"));
         self.make_draggable();
         self.bind_module_events(inserted_module)
-        self.calculate_info();
+        self.refresh();
         return inserted_module;
       }
 
@@ -287,8 +289,8 @@
         return false;
       });
 
-      this.$element.find("#add_row").on("shown", function() {
-        $("#add_row input[name=width]").focus();
+      this.$element.find("#add_row, #save_online_setup").on("shown", function() {
+        $(this).find("input[type=text]").focus();
       });
 
       this.$element.find("#add_module form").on("submit", function() {
@@ -306,6 +308,38 @@
         self.add_module($(this).find("option:selected").val(), self.$element.find(".euro_row").attr("data-id"));
         $("#add_custom_module").modal('hide');
         return false;
+      });
+
+      this.$element.find("#save_online_setup form").on("submit", function() {
+        $(this).find("input[name=preset]").val(self.save());
+        var name = $(this).find("input[name=name]").val();
+        $.post($(this).attr("action"), $(this).serialize(), function(data) {
+          var new_option = $("<option></option>").attr("value", data).html(name);
+          self.$element.find("#load_online_setup select").append(new_option);
+        });
+
+        $("#save_online_setup").modal('hide');
+        return false;
+      });
+
+      this.$element.find("#load_online_setup form").on("submit", function() {
+        $.getJSON("/modules/setup/" + $(this).find("option:selected").val(), function(data) {
+          self.clear();
+          self.load(JSON.parse(data.setup[0].fields.preset));
+          $("#load_online_setup").modal('hide');
+        });
+        return false;
+      });
+
+      this.$element.find("#load_online_setup .btn_delete").on("click", function() {
+        if (confirm("Are you sure?")) {
+          var $modal = $(this).parents(".modal");
+          var setup_id = $modal.find("option:selected").val();
+          $.post("/modules/setup/" + setup_id + "/delete/", {}, function(data) {
+            $modal.find("option:selected").remove();
+          });
+        }
+        $(this).parents(".modal").modal('hide');
       });
 
       this.$element.find("#load_from_file input[type=file]").on("change", function(event) {
@@ -336,17 +370,8 @@
 
       this.$element.find(".btn_delete_selected").on("click", function() {
         self.$element.find(".module.selected").remove();
-        self.calculate_info();
+        self.refresh();
         return false;
-      });
-
-      this.$element.find(".btn_load_locally").on("click", function() {
-        self.clear();
-        self.load(JSON.parse(localStorage.planner_setup));
-      });
-
-      this.$element.find(".btn_save_locally").on("click", function() {
-        self.save_locally();
       });
 
       this.$element.find(".btn_save_to_file").on("click", function() {
@@ -356,6 +381,16 @@
       // hack to fix bootstrap dropdown problem
       $('a.dropdown-toggle, .dropdown-menu a').on('touchstart', function(e) {
         e.stopPropagation();
+      });
+    },
+
+    refresh: function() { this.$element.trigger("refresh") },
+
+    bind_refresh: function() {
+      var self = this;
+      this.$element.on("refresh", function() {
+        self.calculate_info();
+        self.save_locally();
       });
     },
 
@@ -392,11 +427,43 @@
           self.$element.find("#add_module input[name=module_id]").val(ui.item.id);
         }
       });
-    }
+    },
+
+    django_csrf: function() {
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      var csrftoken = getCookie('csrftoken');
+
+      function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+      }
+      $.ajaxSetup({
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+    },
   }
 
 
- /* CAROUSEL PLUGIN DEFINITION
+ /* PLANNER PLUGIN DEFINITION
   * ========================== */
 
   $.fn.planner = function (option) {
