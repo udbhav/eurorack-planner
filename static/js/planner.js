@@ -265,13 +265,14 @@
     load: function(save_info) {
       var self = this;
       this.row_autoincrement = save_info['row_autoincrement'];
-
+      save_info['rows'].reverse();
       $.each(save_info['rows'], function(index, row) {
         self.add_row(row.size, row.id);
         $.each(row['modules'], function(module_index, module) {
           self.add_module(module.id, row.id, module);
         });
       });
+      self.realign_modules();
     },
 
     bind_menu_events: function() {
