@@ -1,6 +1,11 @@
+import os
+import urllib
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.files import File  # you need this somewhere
+
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFit
 
@@ -52,13 +57,29 @@ class Module(models.Model):
     def autocomplete_name(self):
         return '%s %s' % (self.manufacturer.name, self.name)
 
-    def get_display_image_url(self):
+    def get_eurorackdb_image_path(self):
         if self.eurorackdb_image:
-            return 'http://eurorackdb.com/assets/%s' % self.eurorackdb_image
-        elif self.image:
+            return 'http://eurorackdb.com/assets/%s' % self.eurorackdb_image        
+        else:
+            return None
+
+    def get_display_image_url(self):
+        if self.image:
             return self.medium_image.url
+        elif self.eurorackdb_image:
+            return self.get_eurorackdb_image_path()
         else:
             return ''
+
+    def save_eurorackdb_image(self):
+        result = urllib.urlretrieve(self.get_eurorackdb_image_path()) 
+        if result:
+            self.image.save(
+                os.path.basename(self.get_eurorackdb_image_path()),
+                File(open(result[0]))
+                )
+
+            self.save()
 
     @models.permalink
     def get_absolute_url(self):
