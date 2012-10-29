@@ -17,6 +17,7 @@ class EurorackDBImporter(object):
         ['negative_current_12v', 'module_current_neg_12v_ma'],
         ['current_5v', 'module_current_plus_5v_ma'],
         ['url', 'module_url'],
+        ['msrp', 'module_msrp'],
         ]
     string_fields = ['name', 'eurorackdb_image', 'url']
 
@@ -73,6 +74,10 @@ class EurorackDBImporter(object):
 
     def prepare_data(self, json_module):
         for field in self.fields:
+            # handle msrp dollar signs
+            if field[0] == 'msrp':
+                json_module[field[1]] = json_module[field[1]].replace('$','').replace(',','').replace('.00','')
+
             # Strings must not be None type
             if json_module[field[1]] == None and field[0] in self.string_fields:
                 json_module[field[1]] = ''
