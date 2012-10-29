@@ -77,6 +77,7 @@ class JSONModuleView(JSONResponseMixin, BaseDetailView):
         module_object = {
             'id': module.id,
             'name': module.name,
+            'image': module.get_display_image_url(),
             'hp': module.hp,
             'depth': module.depth,
             'current_12v': module.current_12v,
@@ -87,11 +88,6 @@ class JSONModuleView(JSONResponseMixin, BaseDetailView):
             'current_5v': module.current_5v,
             }
 
-        if module.image:
-            module_object['image'] = module.medium_image.url
-        else:
-            module_object['image'] = None
-        
         if module.manufacturer:
             module_object['manufacturer'] = module.manufacturer.name
             module_object['manufacturer_id'] = module.manufacturer.id

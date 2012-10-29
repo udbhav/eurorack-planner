@@ -52,6 +52,14 @@ class Module(models.Model):
     def autocomplete_name(self):
         return '%s %s' % (self.manufacturer.name, self.name)
 
+    def get_display_image_url(self):
+        if self.eurorackdb_image:
+            return 'http://eurorackdb.com/assets/%s' % self.eurorackdb_image
+        elif self.image:
+            return self.medium_image.url
+        else:
+            return ''
+
     @models.permalink
     def get_absolute_url(self):
         return ('module', [str(self.id)])
