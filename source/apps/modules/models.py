@@ -72,14 +72,15 @@ class Module(models.Model):
             return ''
 
     def save_eurorackdb_image(self):
-        result = urllib.urlretrieve(self.get_eurorackdb_image_path()) 
-        if result:
-            self.image.save(
-                os.path.basename(self.get_eurorackdb_image_path()),
-                File(open(result[0]))
-                )
-
-            self.save()
+        image_path = self.get_eurorackdb_image_path()
+        if image_path:
+            result = urllib.urlretrieve(image_path) 
+            if result:
+                self.image.save(
+                    os.path.basename(image_path),
+                    File(open(result[0]))
+                    )
+                self.save()
 
     @models.permalink
     def get_absolute_url(self):
