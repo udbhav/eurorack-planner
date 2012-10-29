@@ -76,5 +76,3 @@ class Setup(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    def build_image(self):
