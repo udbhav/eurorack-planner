@@ -323,6 +323,13 @@
         return false;
       });
 
+      this.$element.find("#save_setup_image form").on("submit", function(data) {
+        $(this).find("input[name=preset]").val(self.save());
+        $.post($(this).attr("action"), $(this).serialize());
+        $("#save_setup_image").modal('hide');
+        return false;
+      });
+
       this.$element.find("#load_online_setup form").on("submit", function() {
         $.getJSON("/modules/setup/" + $(this).find("option:selected").val(), function(data) {
           self.clear();

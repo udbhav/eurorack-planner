@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'registration',
     'django_forms_bootstrap',
     'imagekit',
+    'djcelery',
 
 ) + PROJECT_APPS
 
@@ -152,3 +153,11 @@ INTERNAL_IPS = ("127.0.0.1",)
 # Django Registration
 ACCOUNT_ACTIVATION_DAYS = 14
 LOGIN_REDIRECT_URL = '/'
+
+# Email
+DEFAULT_FROM_EMAIL = 'noreply@eurorackplanner.com'
+
+# Celery
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = 'redis://'

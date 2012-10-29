@@ -1,10 +1,12 @@
-import os
-import urllib
+import os, urllib, json, StringIO
 
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files import File  # you need this somewhere
+from django.core.mail import EmailMessage
+
+from PIL import Image
 
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFit
@@ -14,25 +16,6 @@ class Manufacturer(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-class ModuleImageURLField(object):
-    name = 'full_image_url'
-    serialize = True
-    rel = None
-
-    def _get_val_from_obj(self, obj):
-        try:
-            return obj.image.url
-        except ValueError:
-            return ''
-
-    def value_to_string(self, obj):
-        try:
-            return obj.image.url
-        except ValueError:
-            return ''
-
 
 class Module(models.Model):
     name = models.CharField(max_length=200)
@@ -93,3 +76,5 @@ class Setup(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def build_image(self):

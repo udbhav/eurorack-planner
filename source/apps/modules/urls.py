@@ -21,6 +21,7 @@ urlpatterns = patterns(
     url(r'^planner/$', 'apps.modules.views.planner',  name='planner'),
     url(r'^save-to-file/$', 'apps.modules.views.save_to_file', name='save_to_file'),
 
+    url(r'^save-setup-image/$', 'apps.modules.views.save_setup_image', name='save_setup_image'),
 
     url(r'^custom/$', login_required(CustomModulesView.as_view()), name='custom_modules'),
     url(r'^custom/new$', login_required(NewCustomModuleView.as_view()), name='new_custom_module'),

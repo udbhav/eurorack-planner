@@ -13,6 +13,8 @@ Setup
 
     pip install -r requirements.txt
 
+* You'll need Redis or another suitable backend for Celery
+
 * Create /source/settings/local.py (see /source/settings/local.example.py)
 
 * Sync your databases::

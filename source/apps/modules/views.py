@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 from apps.modules.models import Manufacturer, Module, Setup
 from apps.modules.forms import CustomModuleForm, SetupForm
+from apps.modules.tasks import build_setup_image
 
 class JSONResponseMixin(object):
     def render_to_response(self, context):
@@ -175,6 +176,14 @@ def save_to_file(request):
     else:
         return http.HttpReponse('')
 
+def save_setup_image(request):
+    if request.method == 'POST' and request.user.is_authenticated():
+        preset = request.POST.get('preset', None)
+        build_setup_image.delay(preset, request.user.email)
+        return http.HttpResponse('saved')
+    else:
+        return http.HttpResponse('did not save')
+        
 def save_setup(request):
     if request.method == 'POST' and request.user.is_authenticated():
         setup = Setup(user = request.user)
@@ -183,7 +192,6 @@ def save_setup(request):
             setup = form.save()
             return http.HttpResponse(setup.id)
         else:
-            assert False
             return http.HttpResponse('did not save')            
     else:
         return http.HttpResponse('did not save')

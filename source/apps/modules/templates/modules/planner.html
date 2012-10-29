@@ -37,6 +37,7 @@
       <ul class="dropdown-menu">
         <li><a href="#save_online_setup" role="button" data-toggle="modal">Save Setup</a></li>
         <li><a href="#" class="btn_save_to_file">Save Setup To File</a></li>
+        <li><a href="#save_setup_image" role="button" data-toggle="modal">Save Setup as Image</a></li>
       </ul>
     </div>
 
@@ -149,6 +150,32 @@
       </form>
       {% else %}
       You need to <a href="{% url registration_register %}">register</a> to save setups online.  You can still save to file.
+      {% endif %}
+    </div>
+    <div class="modal-footer">
+      {% if request.user.is_authenticated %}
+      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary btn_add">Save</button>
+      {% else %}
+      <button class="btn" data-dismiss="modal">Ok</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="modal hide fade" id="save_setup_image">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h3>Save Setup as Image</h3>
+    </div>
+    <div class="modal-body">
+      {% if request.user.is_authenticated %}
+      <form class="form-inline" method="post" action="{% url save_setup_image %}">
+        {% csrf_token %}
+        After hitting save, your image will be emailed to you shortly.
+        <input type="hidden" name="preset" value="">
+      </form>
+      {% else %}
+      You need to <a href="{% url registration_register %}">register</a> to save setups as images.  Use screencaps in the meantime.
       {% endif %}
     </div>
     <div class="modal-footer">
