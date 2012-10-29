@@ -10,6 +10,6 @@ class ModuleIndex(indexes.SearchIndex):
         return Module
 
     def index_queryset(self):
-        return Module.objects.all()
+        return Module.objects.filter(custom=False)
 
 site.register(Module, ModuleIndex)

@@ -43,6 +43,8 @@ class Module(models.Model):
     url = models.CharField(blank=True, max_length=200)
     user = models.ForeignKey(User, blank=True, null=True)
     custom = models.BooleanField(blank=True)
+    eurorackdb_id = models.IntegerField(blank=True, null=True, db_index=True)
+    eurorackdb_image = models.CharField(max_length=200, blank=True)
 
     def __unicode__(self):
         return self.name
