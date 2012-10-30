@@ -70,7 +70,7 @@ def update_data():
     new_modules = Module.objects.filter(image='').exclude(eurorackdb_image='')
 
     # now modules that have been updated within the last 6 hours, maybe the image has changed.
-    updated_modules = Module.objects.filter(updated__gte=datetime.now() - timedelta(hours=6))
+    updated_modules = Module.objects.exclude(eurorackdb_image='').filter(updated__gte=datetime.now() - timedelta(hours=6))
 
     # combine the two querysets
     modules = chain(new_modules, updated_modules)
