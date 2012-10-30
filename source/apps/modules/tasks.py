@@ -5,6 +5,9 @@ from PIL import Image
 from django.conf import settings
 from django.core.mail import EmailMessage
 
+from apps.modules.importers import EurorackDBImporter
+from apps.modules.models import Module
+
 @task()
 def build_setup_image(json_string, email):
     row_height = 262
@@ -53,3 +56,14 @@ def build_setup_image(json_string, email):
     email = EmailMessage('Your image from eurorackplanner.com', 'Happy wiggling!', settings.DEFAULT_FROM_EMAIL, [email,])
     email.attach('eurorack_setup.jpg',image_string.getvalue(),'image/jpeg')
     email.send(fail_silently=False)
+
+@task()
+def update_modules():
+    importer = EurorackDBImporter()
+    importer.sync_data()
+
+@task()
+def update_images():
+    modules = Module.objects.filter(image='')
+    for module in modules:
+        module.save_eurorackdb_image()    
