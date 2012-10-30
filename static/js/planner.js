@@ -282,6 +282,10 @@
         $(this).parents(".modal").find("form").submit();
       });
 
+      this.$element.find(".modal .btn_keep_open").on("click", function() {
+        $(this).parents(".modal").find("form").addClass("keep_open").submit();
+      });
+
       this.$element.find("#add_row form").on("submit", function() {
         var width = parseInt($(this).find("input[name=width]").val());
         if (!isNaN(width)) self.add_row(width);
@@ -297,7 +301,14 @@
       this.$element.find("#add_module form").on("submit", function() {
         self.add_module($(this).find("input[name=module_id]").val(), self.$element.find(".euro_row").attr("data-id"));
         $(this).find("input[name=module_id], input[name=autocomplete]").val("");
-        $("#add_module").modal('hide');
+
+        if (!$(this).hasClass("keep_open")) {
+          $("#add_module").modal('hide');
+        } else {
+          $(this).find("input[type=text]").focus();
+          $(this).removeClass("keep_open");
+        }
+
         return false;
       });
 
