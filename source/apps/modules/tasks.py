@@ -47,7 +47,7 @@ def build_setup_image(json_string, email):
 
             if module_image:
                 module_image = module_image.resize( (hp_unit * int(module['size']), row_height), Image.ANTIALIAS )
-                x = int(module['left'].replace('px', ''))
+                x = int(round(float(module['left'].replace('px', ''))))
                 image.paste(module_image, (x, i * row_height))
 
         i += 1
