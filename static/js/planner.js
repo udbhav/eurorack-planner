@@ -93,6 +93,7 @@
       if (row.prev().length != 0) {
         row.prev().before(row);
         this.realign_modules();
+
       }
     },
 
@@ -110,12 +111,12 @@
         var top = 262 * index;
         self.$element.find(".module[data-row=" + $(row).attr("data-id") + "]").css("top", top);
       });
+      this.refresh();
     },
 
     delete_row: function(row_id) {
       this.$element.find(".module[data-row=" + row_id + "]").remove();
       this.$element.find(".euro_row[data-id=" + row_id + "]").remove();
-      this.refresh();
       this.realign_modules();
     },
 
