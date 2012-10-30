@@ -172,7 +172,7 @@
       {% if request.user.is_authenticated %}
       <form class="form-inline" method="post" action="{% url save_setup_image %}">
         {% csrf_token %}
-        After hitting save, your image will be emailed to you shortly.
+        Please select save and your image will be emailed to you shortly.
         <input type="hidden" name="preset" value="">
       </form>
       {% else %}
