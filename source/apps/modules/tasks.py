@@ -1,4 +1,6 @@
 import json, urllib, StringIO
+from itertools import chain
+from datetime import datetime, timedelta
 
 from celery import task
 from PIL import Image
@@ -58,12 +60,25 @@ def build_setup_image(json_string, email):
     email.send(fail_silently=False)
 
 @task()
-def update_modules():
+def update_data():
+    # first let's update the module data from eurorackdb.com
     importer = EurorackDBImporter()
     importer.sync_data()
 
-@task()
-def update_images():
-    modules = Module.objects.filter(image='')
+    # then we deal with the images
+    # let's handle modules with no images first, these would be the new ones
+    new_modules = Module.objects.filter(image='').exclude(eurorackdb_image='')
+
+    # now modules that have been updated within the last 6 hours, maybe the image has changed.
+    updated_modules = Module.objects.filter(updated__gte=datetime.now() - timedelta(hours=6))
+
+    # combine the two querysets
+    modules = chain(new_modules, updated_modules)
+
+    # make it unique
+    modules = list(set(modules))
+
     for module in modules:
-        module.save_eurorackdb_image()    
+        module.save_eurorackdb_image()
+
+    

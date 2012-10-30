@@ -1,5 +1,7 @@
 import os, urllib, json, StringIO
 
+from datetime import datetime
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -33,6 +35,11 @@ class Module(models.Model):
     custom = models.BooleanField(blank=True)
     eurorackdb_id = models.IntegerField(blank=True, null=True, db_index=True)
     eurorackdb_image = models.CharField(max_length=200, blank=True)
+    updated = models.DateTimeField(default=datetime.now())
+
+    def save(self, *args, **kwargs):
+        self.updated = datetime.now()
+        super(Module, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
