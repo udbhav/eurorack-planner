@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>Eurorack Planner</title>
+    <!--[if IE]> <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    {% compress css %}
+    <link href="{{ STATIC_URL }}css/lib/bootstrap/bootstrap.less" rel="stylesheet" type="text/less" />
+    <link href="{{ STATIC_URL }}css/styles.css" rel="stylesheet" />
+    {% endcompress %}
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-35516237-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Eurorack Planner</a>
+          <ul class="nav">
+            <li{% block planner_nav %}{% endblock %}><a href="/">Planner</a></li>
+            <li{% block about_nav %}{% endblock %}><a href="{% url about %}">About</a></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Sorry there was an error with your request</h1>
+    </div>
+
+  </body>
+</html>
